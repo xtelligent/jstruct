@@ -1,0 +1,20 @@
+const assert = require('assert')
+const { types, dataTypeOf } = require('../src/datatype')
+
+describe('datatype module', () => {
+    it('should know the data types', () => {
+        assert.equal(dataTypeOf(), types.UNDEFINED)
+        assert.equal(dataTypeOf(null), types.NULL)
+        assert.equal(dataTypeOf(''), types.STRING)
+        assert.equal(dataTypeOf(12), types.INT)
+        assert.equal(dataTypeOf(-10.5), types.FLOAT)
+        assert.equal(dataTypeOf(12 / 'text'), types.ILLEGAL_NUMBER)
+        assert.equal(dataTypeOf(Number.POSITIVE_INFINITY), types.ILLEGAL_NUMBER)
+        assert.equal(dataTypeOf(true), types.BOOLEAN)
+        assert.equal(dataTypeOf(false), types.BOOLEAN)
+        assert.equal(dataTypeOf({}), types.OBJECT)
+        assert.equal(dataTypeOf([]), types.ARRAY)
+        assert.equal(dataTypeOf(() => {}), types.FUNCTION)
+        assert.equal(dataTypeOf(Symbol()), types.SYMBOL)
+    })
+})

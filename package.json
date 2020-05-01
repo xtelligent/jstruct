@@ -1,0 +1,14 @@
+{
+  "name": "@xtelligent/jstruct",
+  "version": "1.0.0",
+  "description": "type and function signature declarations",
+  "main": "index.js",
+  "scripts": {
+    "test": "$(npm bin)/mocha --timeout 5000 --recursive test"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "7.1.1"
+  }
+}
