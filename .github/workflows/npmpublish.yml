@@ -4,9 +4,11 @@
 name: Node.js Package
 
 on:
-  release:
-    types: [created]
-
+  # release:
+  #   types: [created]
+  push:
+    branches: [ * ]
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,7 +30,7 @@ jobs:
           node-version: 12
           registry-url: https://registry.npmjs.org/
       - run: npm ci
-      - run: npm publish
+      - run: toolbin/publish.sh
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
