@@ -44,7 +44,6 @@ jobs:
           node-version: 12
           registry-url: https://npm.pkg.github.com/
       - run: npm ci
-      - run: toolbin/publish.sh
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          BUILDNUMBER: "$GITHUB_RUN_NUMBER"
+      - env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: toolbin/publish.sh $GITHUB_RUN_NUMBER
