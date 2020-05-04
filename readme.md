@@ -1,6 +1,6 @@
 # jstruct
 
-![Builds](https://github.com/xtelligent/jstruct/workflows/npmpublish.yml/badge.svg)
+![Build/Tests](https://github.com/xtelligent/jstruct/workflows/Node.js%20Package/badge.svg?branch=master)
 
 When dealing with JSON over HTTP, you design and encounter some document structures that
 can be unwieldy. Yes, there are great validators for structure, and there are tools like
