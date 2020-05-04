@@ -1,16 +1,29 @@
-const types = {
-    UNDEFINED: 1,
-    NULL: 2,
-    STRING: 3,
-    INT: 4,
-    FLOAT: 5,
-    ILLEGAL_NUMBER: 6,
-    BOOLEAN: 7,
-    OBJECT: 8,
-    ARRAY: 9,
-    SYMBOL: 10,
-    FUNCTION: 11,
+const classifications = {
+    NIL: 0,
+    PRIMITIVE: 1,
+    LIST: 2,
+    MAP: 3,
+    CALLABLE: 4,
 }
+const {
+    NIL, PRIMITIVE, LIST, MAP, CALLABLE,
+} = classifications
+
+const types = Object.assign({}, ...Object.entries({
+    UNDEFINED: [1, NIL],
+    NULL: [2, NIL],
+    STRING: [3, PRIMITIVE],
+    INT: [4, PRIMITIVE],
+    FLOAT: [5, PRIMITIVE],
+    ILLEGAL_NUMBER: [6, PRIMITIVE],
+    BOOLEAN: [7, PRIMITIVE],
+    OBJECT: [8, MAP],
+    ARRAY: [9, LIST],
+    SYMBOL: [10, PRIMITIVE],
+    FUNCTION: [11, CALLABLE],
+}).map(([k, [id, classification]]) => ({
+    [k]: { id, classification },
+})))
 
 const processNumber = (n) => {
     if (Number.isInteger(n)) return types.INT
@@ -36,7 +49,12 @@ const dataTypeOf = (v) => {
     return action(v)
 }
 
+const classificationOf = (v) => dataTypeOf(v)
+    .classification
+
 module.exports = {
     dataTypeOf,
     types,
+    classificationOf,
+    classifications,
 }

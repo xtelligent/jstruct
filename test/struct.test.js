@@ -1,5 +1,6 @@
 const assert = require('assert')
 const { defineStruct } = require('../src/struct')
+const { FIELD_VALIDATION } = require('../src/field-defn')
 
 describe('struct module', () => {
     it('should create a struct definition', () => {
@@ -21,5 +22,22 @@ describe('struct module', () => {
             },
             ar: [1, 2, 1],
         })
+    })
+
+    const catcher = callback => {
+        try {
+            callback()
+            return {
+                code: 'NO_ERROR',
+            }
+        } catch (e) {
+            return e
+        }
+    }
+
+    it('should validate rendering overlays', () => {
+        const s = defineStruct({ a: 1, b: ['x', 'y']})
+        assert.equal(catcher(() => s.render({ a: 'xxxxx' })).code, FIELD_VALIDATION)
+        assert.equal(catcher(() => s.render({ b: [] })).code, 'NO_ERROR')
     })
 })

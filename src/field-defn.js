@@ -1,5 +1,6 @@
 const { types, dataTypeOf } = require('./datatype')
 const { create: createError } = require('./error')
+const { merge: semanticMerge } = require('./merge')
 
 const structDefTag = Symbol.for('structDefTag')
 const renderData = Symbol.for('renderData')
@@ -93,7 +94,6 @@ class StructFieldDefn extends BaseFieldDefn {
         if (typeof doc !== 'object') {
             return this.doThrow(doc, `Expected object in field [${this.name}]`)
         }
-        this.renderData(doc)
         return null
     }
     validate(doc) {
@@ -108,7 +108,10 @@ class StructFieldDefn extends BaseFieldDefn {
         return this.defaultValidator(doc)
     }
     [renderData](overlayValue) {
-        return this.structDefn.render(overlayValue)
+        const def = this.structDefn.render()
+        const result = semanticMerge(def, overlayValue)
+        this.validate(result)
+        return result
     }
 }
 
@@ -148,8 +151,10 @@ class ArrayFieldDefn extends BaseFieldDefn {
         }
         return this.defaultValidator(value)
     }
+
     [renderData](overlayValue) {
-        const result = Object.assign([], this.defaultValue, overlayValue || [])
+        const def = this.defaultValue || []
+        const result = semanticMerge(def, overlayValue)
         this.validate(result)
         return result
     }
@@ -170,4 +175,5 @@ module.exports = {
     create,
     structDefTag,
     renderData,
+    FIELD_VALIDATION,
 }
