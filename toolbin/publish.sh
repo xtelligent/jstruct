@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 set -e
+
+if [ -z "$1" ]; then
+    echo "Expected BUILDNUMBER parameter." >&2
+    exit 1
+fi
+
+BUILDNUMBER="$1"
 MYDIR="$(cd $(dirname "$0") && pwd)"
 PROJECTDIR="$(cd "$MYDIR/.." && pwd)"
 
