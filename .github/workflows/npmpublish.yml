@@ -30,9 +30,10 @@ jobs:
           node-version: 12
           registry-url: https://registry.npmjs.org/
       - run: npm ci
-      - run: toolbin/publish.sh
-        env:
+      - env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          BUILDNUMBER: "$GITHUB_RUN_NUMBER"
+        run: toolbin/publish.sh
 
   publish-gpr:
     needs: build

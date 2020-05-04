@@ -42,4 +42,13 @@ describe('struct module', () => {
         assert.equal(catcher(() => s.render({ c: '?' })).code, 'UNDEFINED_FIELDS')
         assert.equal(catcher(() => s.render({ z: { y: 'x' } })).code, 'UNDEFINED_FIELDS')
     })
+
+    it('should support custom validators', () => {
+        const validA = { x: 1 }
+        const s = defineStruct({ a: validA, b: ['x', 'y'] })
+            .addValidator('a', v => JSON.stringify(v) === JSON.stringify(validA) ? null : { code: 'A-BAD' })
+            .addValidator('b', () => ({ code: 'B-BAD' }))
+        assert.equal(catcher(() => s.render({ a: { x: 2 } })).code, 'FIELD_VALIDATION')
+        assert.equal(catcher(() => s.render({ b: [0] })).code, 'FIELD_VALIDATION')
+    })
 })

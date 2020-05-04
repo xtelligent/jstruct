@@ -42,7 +42,7 @@ class FieldDefn extends BaseFieldDefn {
             ? makeValidatorForType({ value: defaultValue, name })
             : validator
         this.validator = v
-        this.validate(defaultValue)
+        // this.validate(defaultValue)
         this.defaultValue = defaultValue
     }
 
@@ -112,7 +112,7 @@ class StructFieldDefn extends BaseFieldDefn {
     }
     validate(doc) {
         if (this.validator) {
-            problem = this.validator(doc)
+            const problem = this.validator(doc)
             if (problem) {
                 return this.doThrow(doc, problem.message || 'Document did not validate',
                     problem.info)
@@ -156,7 +156,7 @@ class ArrayFieldDefn extends BaseFieldDefn {
     }
     validate(value) {
         if (this.validator) {
-            problem = this.validator(value)
+            const problem = this.validator(value)
             if (problem) {
                 return this.doThrow(value, problem.message || 'Value did not validate',
                     problem.info)
