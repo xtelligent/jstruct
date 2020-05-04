@@ -10,7 +10,7 @@ const FIELD_VALIDATION = 'FIELD_VALIDATION'
 const defaultValidator = () => null
 const makeValidatorForType = ({ value, name }) => value === null || value === undefined
     ? defaultValidator
-    : v => typeof(v) !== typeof(value)
+    : v => typeof (v) !== typeof (value)
         ? { message: `Expected type ${typeof value} for field [${name}]` }
         : null
 
@@ -76,6 +76,10 @@ class StructFieldDefn extends BaseFieldDefn {
         super(name)
         this.structDefn = structDefn
         this.validator = validator
+        const def = this.structDefn.render()
+        this.keySet = new Set(
+            Object.keys(def)
+        )
     }
 
     doThrow(doc, message, info) {
@@ -93,6 +97,16 @@ class StructFieldDefn extends BaseFieldDefn {
     defaultValidator(doc) {
         if (typeof doc !== 'object') {
             return this.doThrow(doc, `Expected object in field [${this.name}]`)
+        }
+        const badFields = Object.keys(doc)
+            .filter(key => !this.keySet.has(key))
+        if (badFields.length > 0) {
+            throw createError('UndefinedFieldsError',
+                `The following fields are undefined: ${badFields}`,
+                'UNDEFINED_FIELDS',
+                {
+                    fields: badFields,
+                })
         }
         return null
     }
@@ -161,7 +175,7 @@ class ArrayFieldDefn extends BaseFieldDefn {
 }
 
 const create = (name, value, validator) => {
-    switch(dataTypeOf(value)) {
+    switch (dataTypeOf(value)) {
         case types.OBJECT:
             return new StructFieldDefn(name, value, validator)
         case types.ARRAY:

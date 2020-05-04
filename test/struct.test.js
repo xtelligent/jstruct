@@ -36,8 +36,10 @@ describe('struct module', () => {
     }
 
     it('should validate rendering overlays', () => {
-        const s = defineStruct({ a: 1, b: ['x', 'y']})
+        const s = defineStruct({ a: 1, b: ['x', 'y'], z: { m: 'n' } })
         assert.equal(catcher(() => s.render({ a: 'xxxxx' })).code, FIELD_VALIDATION)
         assert.equal(catcher(() => s.render({ b: [] })).code, 'NO_ERROR')
+        assert.equal(catcher(() => s.render({ c: '?' })).code, 'UNDEFINED_FIELDS')
+        assert.equal(catcher(() => s.render({ z: { y: 'x' } })).code, 'UNDEFINED_FIELDS')
     })
 })

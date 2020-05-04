@@ -1,7 +1,11 @@
 {
   "name": "@xtelligent/jstruct",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "type and function signature declarations",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xtelligent/jstruct.git"
+  },
   "main": "index.js",
   "scripts": {
     "test": "$(npm bin)/mocha --timeout 5000 --recursive test"
@@ -10,5 +14,9 @@
   "license": "ISC",
   "devDependencies": {
     "mocha": "7.1.1"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/xtelligent/jstruct/issues"
+  },
+  "homepage": "https://github.com/xtelligent/jstruct#readme"
 }

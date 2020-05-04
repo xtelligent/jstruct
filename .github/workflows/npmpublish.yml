@@ -47,3 +47,4 @@ jobs:
       - run: toolbin/publish.sh
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          BUILDNUMBER: "$GITHUB_RUN_NUMBER"
