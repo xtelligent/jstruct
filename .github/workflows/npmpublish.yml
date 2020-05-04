@@ -32,8 +32,7 @@ jobs:
       - run: npm ci
       - env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-          BUILDNUMBER: "$GITHUB_RUN_NUMBER"
-        run: toolbin/publish.sh
+        run: BUILDNUMBER=$GITHUB_RUN_NUMBER toolbin/publish.sh
 
   publish-gpr:
     needs: build
