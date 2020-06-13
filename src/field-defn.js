@@ -28,10 +28,18 @@ class BaseFieldDefn {
         return this._name
     }
     validate(v) {
-        return notImplemented('validate', v)
+        return BaseFieldDefn.notImplemented('validate', v)
     }
     [renderData](overlayValue) {
-        return notImplemented(renderData, overlayValue)
+        return BaseFieldDefn.notImplemented(renderData, overlayValue)
+    }
+
+    nestedDefinition(name) {
+        return BaseFieldDefn.notImplemented('nestedDefinition', name)
+    }
+
+    get isFieldDefn() {
+        return typeof this[renderData] === 'function'
     }
 }
 
@@ -76,10 +84,14 @@ class StructFieldDefn extends BaseFieldDefn {
         super(name)
         this.structDefn = structDefn
         this.validator = validator
-        const def = this.structDefn.render()
+        const def = this.structDefn.fieldDefinitions()
         this.keySet = new Set(
             Object.keys(def)
         )
+    }
+
+    nestedDefinition(name) {
+        return this.structDefn.fieldDefinitions()[name]
     }
 
     doThrow(doc, message, info) {
@@ -190,4 +202,8 @@ module.exports = {
     structDefTag,
     renderData,
     FIELD_VALIDATION,
+    private: {
+        StructFieldDefn,
+        ArrayFieldDefn,
+    }
 }

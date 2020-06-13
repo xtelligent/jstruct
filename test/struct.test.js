@@ -22,6 +22,14 @@ describe('struct module', () => {
             },
             ar: [1, 2, 1],
         })
+        const fds = defineStruct(skeleton).fieldDefinitions()
+        assert.equal(Object.keys(fds).length, 4)
+        Object.entries(fds)
+            .forEach(([k, def]) => {
+                assert(['a', 'b', 'ss', 'ar'].includes(k))
+                assert(def.isFieldDefn)
+                return def
+            })
     })
 
     const catcher = callback => {
@@ -43,12 +51,16 @@ describe('struct module', () => {
         assert.equal(catcher(() => s.render({ z: { y: 'x' } })).code, 'UNDEFINED_FIELDS')
     })
 
-    it('should support custom validators', () => {
+    it.only('should support custom validators', () => {
         const validA = { x: 1 }
-        const s = defineStruct({ a: validA, b: ['x', 'y'] })
+        const s = defineStruct({ a: validA, b: ['x', 'y'], c: { y: 2 } })
             .addValidator('a', v => JSON.stringify(v) === JSON.stringify(validA) ? null : { code: 'A-BAD' })
             .addValidator('b', () => ({ code: 'B-BAD' }))
+            .addValidator('c.y', v => assert(v > 0))
         assert.equal(catcher(() => s.render({ a: { x: 2 } })).code, 'FIELD_VALIDATION')
         assert.equal(catcher(() => s.render({ b: [0] })).code, 'FIELD_VALIDATION')
+        assert.equal(catcher(() => s.render({ a: { x: 0 } })).code, 'FIELD_VALIDATION')
+        assert.equal(catcher(() => s.render({ c: { y: 0 } })).code, 'FIELD_VALIDATION')
+        assert.equal(catcher(() => s.render({ c: { y: 2 } })).code, 'FIELD_VALIDATION')
     })
 })

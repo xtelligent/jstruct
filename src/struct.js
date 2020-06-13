@@ -1,6 +1,12 @@
-const { create: createField, structDefTag, renderData } = require('./field-defn')
+const {
+    create: createField,
+    structDefTag,
+    renderData,
+} = require('./field-defn')
 const { types, dataTypeOf } = require('./datatype')
 const { create: createError } = require('./error')
+const { merge: semanticMerge } = require('./merge')
+const { deepGet, usingAccessor } = require('./deep-get')
 
 const {
     create: createFsm,
@@ -42,8 +48,13 @@ function merge(shape) {
     })
 }
 
+const defnAccessor = (target, key) => typeof target.nestedDefinition === 'function'
+    ? target.nestedDefinition(key)
+    : target[key]
+
 function addValidator(name, validator) {
-    const fld = this.buildContext[name]
+    const fld = usingAccessor(defnAccessor)
+        .deepGet(this.buildContext, name)
     return field.call(this, name, fld.defaultValue, validator)
 }
 
@@ -62,20 +73,33 @@ function render(overlayValues = {}) {
             }
         )
     }
-    const view = Object.assign({}, ...Object.entries(this.buildContext)
+    const view = semanticMerge(Object.assign({}, ...Object.entries(this.buildContext)
         .map(([name, defn]) => ({
-            [name]: defn[renderData](overlayValues[name])
+            [name]: defn[renderData]()
         }))
-    )
+    ), overlayValues)
+    // Force validation on the new view.
+    Object.entries(view)
+        .forEach(([k, v]) => {
+            const defn = this.buildContext[k]
+            defn[renderData](v)
+            return true
+        })
+    return transitionTo(null, view, resultTypes.renderedView)
+}
+
+function fieldDefinitions() {
+    const view = { ...this.buildContext }
     return transitionTo(null, view, resultTypes.renderedView)
 }
 
 const structStateDef = defineState('struct', {
     field, merge,
     addValidator, render,
+    fieldDefinitions,
 })
 
-function defineStruct (initialShape = {}) {
+function defineStruct(initialShape = {}) {
     const state0 = defineState('initialize', { init })
     const fsm = createFsm(state0, structStateDef)
     return fsm.currentActions
